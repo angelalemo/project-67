@@ -1,3 +1,9 @@
+export type PersonType = {
+  name: string;
+  nickname: string;
+  phonenumber: string;
+  image: string;
+};
 export const users = [
   {
     name: "Naruedon Mueangaudon",
