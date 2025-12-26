@@ -103,3 +103,41 @@ body {
 .btn-secondary:hover {
   background-color: #d0d0d0;
 }
+/* PersonForm */
+.pf-form {
+  display: grid;
+  gap: 14px;
+}
+
+.pf-group { display: grid; gap: 8px; }
+
+.pf-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.pf-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text-main);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pf-input::placeholder { color: #9aa0a6; }
+
+.pf-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 112, 243, 0.15);
+}
+
+.pf-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+  justify-content: flex-end;
+}
