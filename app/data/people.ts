@@ -15,12 +15,12 @@ export const users = [
     name: "Supachai Chaimongkol",
     nickname: "Golf",
     phonenumber: "084-367-7079",
-    image: "/images/people/mark.jpg",
+    image: "/images/people/golf.jpg",
   },
   {
     name: "Anusorn Chomthong",
     nickname: "Tum",
     phonenumber: "084-367-7079",
-    image: "/images/people/mark.jpg",
+    image: "/images/people/google.jpg",
   },
 ]

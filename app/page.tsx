@@ -2,7 +2,10 @@
 
 import React, { useState } from 'react';
 import UserCard from './components/personCard'; 
-import { users } from './data/people'; 
+import { users } from './data/people';
+import Button from './components/button';
+import Link from 'next/link';
+
 
 export default function SearchPage() {
   
@@ -27,6 +30,10 @@ export default function SearchPage() {
         onChange={(e) => setSearchTerm(e.target.value)}
         style={{ marginBottom: "20px", padding: "10px" }}
       />
+
+      <Button variant="secondary" onClick={} style={{ marginLeft: "10px" }}>
+        เพิ่มรายชื่อ
+      </Button>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
         {filteredPeople.map((user, index) => (
