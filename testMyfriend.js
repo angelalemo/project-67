@@ -56,6 +56,14 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
         console.log('   ✅ PASS: List restored');
     }
 
+    console.log('Invalid search test');
+    await searchBox.clear();
+    await searchBox.sendKeys('XYZ');
+    await sleep(3000);
+    let noResultCards = await driver.findElements(By.className('person-card'));
+    assert.strictEqual(noResultCards.length, 0, 'No result filter failed');
+    console.log('   ✅ PASS: No results as expected');
+
     console.log('🎉🎉🎉 SUCCESS 🎉🎉🎉');
     await sleep(5000);
 
