@@ -39,9 +39,6 @@ next-env.d.ts
 # (Node / Next / Nest / monorepo common patterns)
 # -----------------------------
 
-# Node modules
-/node_modules/
-
 # Optional PnP
 /.pnp/
 .pnp.js
@@ -75,12 +72,6 @@ lib-cov
 # Build output
 /dist/
 /build/
-
-# Frontend specific
-frontend/out/
-
-# Nest/Backend build output
-backend/dist/
 
 # TypeScript
 *.tsbuildinfo
@@ -177,7 +168,7 @@ test-results.xml
 build/Release
 
 # Prevent accidentally ignoring lockfiles (uncomment if you want to ignore):
-# package-lock.json
+package-lock.json
 # yarn.lock
 # pnpm-lock.yaml
 
@@ -187,33 +178,21 @@ build/Release
 # -----------------------------
 
 # Frontend (Next.js / frontend app)
-frontend/node_modules/
-frontend/.next/
-frontend/.next/cache/
-frontend/out/
-frontend/.vercel/
-frontend/.parcel-cache/
-frontend/.cache/
-frontend/.turbo/
-frontend/.vite/
-frontend/coverage/
-frontend/.nyc_output/
-frontend/.env
-frontend/.env.*
-frontend/*.log
+.next/
+.next/cache/
+.out/
+.vercel/
+.parcel-cache/
+.cache/
+.turbo/
+.vite/
+coverage/
+.nyc_output/
+.env
+.env.*
+*.log
 
-# Backend (Nest / backend app)
-backend/node_modules/
-backend/dist/
-backend/build/
-backend/coverage/
-backend/.nyc_output/
-backend/.temp
-backend/.tmp
-backend/.env
-backend/.env.*
-backend/*.log
-backend/report.*.[0-9]*.[0-9]*.json
-backend/pids
+
+
 
 
