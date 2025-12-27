@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import UserCard from './components/personCard';
+import PersonCard from './components/personCard';
 import { users } from './data/people';
 import Button from './components/button';
 import Modal from './components/Model';
 import PersonForm, { PersonData } from './components/PersonForm';
 
 export default function SearchPage() {
-  const people = users;
+  const [people, setPeople] = useState(users);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,6 +17,11 @@ export default function SearchPage() {
   const openAddModal = () => {
     setEditingPerson(undefined);
     setIsModalOpen(true);
+  };
+
+  const handleDelete = (name: string) => {
+    setPeople((prev) => prev.filter((p) => p.name !== name));
+    alert('ลบสำเร็จ');
   };
 
   const handleSave = (data: PersonData) => {
@@ -49,8 +54,10 @@ export default function SearchPage() {
       </Button>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-  {filteredPeople.map((user, index) => (
-    <UserCard
+  {filteredPeople.map((user, index) => {
+    const originalIndex = people.findIndex((p) => p.name === user.name && p.phonenumber === user.phonenumber);
+    return (
+    <PersonCard
       key={index}
       name={user.name}
       nickname={user.nickname}
@@ -65,8 +72,10 @@ export default function SearchPage() {
         });
         setIsModalOpen(true);
       }}
+      onDelete={() => handleDelete(user.name)}
     />
-  ))}
+    );
+  })}
 </div>
 
    <Modal
