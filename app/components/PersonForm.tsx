@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Button from './button';
 
 export interface PersonData {
+  id?: number;
   name: string;
   nickname: string;
   phonenumber: string;
@@ -18,6 +19,7 @@ interface PersonFormProps {
 
 export default function PersonForm({ initialData, onSubmit, onCancel }: PersonFormProps) {
   const [formData, setFormData] = useState<PersonData>({
+    id: undefined,
     name: '',
     nickname: '',
     phonenumber: '',
