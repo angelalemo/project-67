@@ -10,31 +10,22 @@ interface ModalProps {
 }
 
 export default function Modal({ isOpen, onClose, title, children }: ModalProps) {
+  // ถ้าปิดอยู่ ไม่ต้องเรนเดอร์อะไรเลย
   if (!isOpen) return null;
 
   return (
     <>
-      {/* Overlay */}
-      <div
-        className="fixed inset-0 bg-black bg-opacity-50 z-40"
-        onClick={onClose}
-      />
 
-      {/* Modal Box */}
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md z-50">
+      <div className="modal-popup">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-6 border-b border-gray-100 pb-3">
           <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
-          >
-            ×
-          </button>
         </div>
 
         {/* Content */}
-        <div>{children}</div>
+        <div className="text-gray-600">
+          {children}
+        </div>
       </div>
     </>
   );
