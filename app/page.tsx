@@ -2,13 +2,13 @@
 
 import React, { useState } from 'react';
 import PersonCard from './components/personCard';
-import { users } from './data/people';
+import { persons, PersonType } from './data/people';
 import Button from './components/button';
 import Modal from './components/Model';
 import PersonForm, { PersonData } from './components/PersonForm';
 
 export default function SearchPage() {
-  const [people, setPeople] = useState(users);
+  const [people, setPeople] = useState<PersonType[]>(persons);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,15 +19,21 @@ export default function SearchPage() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (name: string) => {
-    setPeople((prev) => prev.filter((p) => p.name !== name));
+  const handleDelete = (id: number) => {
+    setPeople((prev) => prev.filter((p) => p.id !== id));
     alert('ลบสำเร็จ');
   };
 
   const handleSave = (data: PersonData) => {
-    // TODO: persist data if needed
-    console.log('Create (เพิ่ม):', data);
-    alert('เพิ่มเพื่อนใหม่สำเร็จ!');
+    if (data.id != null) {
+      setPeople((prev) => prev.map((p) => (p.id === data.id ? { ...p, ...data } : p)));
+      alert('แก้ไขข้อมูลสำเร็จ');
+    } else {
+      const newId = Math.max(0, ...people.map((p) => p.id)) + 1;
+      const newPerson: PersonType = { id: newId, name: data.name, nickname: data.nickname, phonenumber: data.phonenumber, image: data.image };
+      setPeople((prev) => [...prev, newPerson]);
+      alert('เพิ่มเพื่อนใหม่สำเร็จ!');
+    }
     setIsModalOpen(false);
   };
 
@@ -54,26 +60,26 @@ export default function SearchPage() {
       </Button>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-  {filteredPeople.map((user, index) => {
-    const originalIndex = people.findIndex((p) => p.name === user.name && p.phonenumber === user.phonenumber);
+  {filteredPeople.map((person) => {
     return (
-    <PersonCard
-      key={index}
-      name={user.name}
-      nickname={user.nickname}
-      phonenumber={user.phonenumber}
-      image={user.image}
-      onEdit={() => {
-        setEditingPerson({
-          name: user.name,
-          nickname: user.nickname,
-          phonenumber: user.phonenumber,
-          image: user.image,
-        });
-        setIsModalOpen(true);
-      }}
-      onDelete={() => handleDelete(user.name)}
-    />
+      <PersonCard
+        key={person.id}
+        name={person.name}
+        nickname={person.nickname}
+        phonenumber={person.phonenumber}
+        image={person.image}
+        onEdit={() => {
+          setEditingPerson({
+            id: person.id,
+            name: person.name,
+            nickname: person.nickname,
+            phonenumber: person.phonenumber,
+            image: person.image,
+          });
+          setIsModalOpen(true);
+        }}
+        onDelete={() => handleDelete(person.id)}
+      />
     );
   })}
 </div>
