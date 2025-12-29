@@ -66,7 +66,6 @@ export default function SearchPage() {
             className={styles.searchInput}
           />
 
-          {/* ตรวจสอบว่า Button รองรับ className หรือ style เพิ่มเติมไหม ถ้าไม่ อาจต้องแก้ที่ Component Button ด้วย */}
           <Button variant="primary" onClick={openAddModal}>
             + เพิ่มเพื่อนใหม่
           </Button>
