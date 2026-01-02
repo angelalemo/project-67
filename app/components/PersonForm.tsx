@@ -11,6 +11,7 @@ export interface PersonData {
   image_url: string | null;
   created_at?: string;
   updated_at?: string;
+  image_file?: File;  // เพิ่มไฟล์จริง
 }
 
 interface PersonFormProps {
@@ -29,6 +30,7 @@ export default function PersonForm({ initialData, onSubmit, onCancel }: PersonFo
   });
 
   const [isDragging, setIsDragging] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -44,6 +46,7 @@ export default function PersonForm({ initialData, onSubmit, onCancel }: PersonFo
   const handleFileProcess = (file: File) => {
     if (file && file.type.startsWith('image/')) {
       const imageUrl = URL.createObjectURL(file);
+      setImageFile(file);  // เก็บไฟล์จริง
       setFormData((prev) => ({ ...prev, image_url: imageUrl }));
     } else {
       alert('กรุณาเลือกไฟล์รูปภาพเท่านั้น');
@@ -78,7 +81,11 @@ export default function PersonForm({ initialData, onSubmit, onCancel }: PersonFo
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.name.trim() && formData.nickname.trim() && formData.phone_number.trim()) {
-      onSubmit(formData);
+      const submitData = { ...formData };
+      if (imageFile) {
+        submitData.image_file = imageFile;  // เพิ่มไฟล์ในการส่ง
+      }
+      onSubmit(submitData);
     } else {
       alert('กรุณากรอกข้อมูลให้ครบทุกช่อง');
     }

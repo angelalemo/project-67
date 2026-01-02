@@ -6,42 +6,34 @@ import { PersonType } from './data/people';
 import Button from './components/button';
 import Modal from './components/Model';
 import PersonForm, { PersonData } from './components/PersonForm';
-
+import ErrorDisplay from './components/ErrorDisplay';
+import { peopleService } from '@/lib/services/people.service';
+import { categorizeError, getUserFriendlyMessage } from '@/lib/utils/errorHandler';
 import styles from './page.module.css'; 
 
 export default function SearchPage() {
   const [people, setPeople] = useState<PersonType[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<unknown>(null);
 
   useEffect(() => {
-    const fetchPeople = async () => {
-      try {
-        const response = await fetch('http://localhost:4000/people', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        setPeople(data);
-        setError(null);
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        console.error('Failed to fetch people:', errorMessage);
-        setError(`ไม่สามารถดึงข้อมูลได้: ${errorMessage}`);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPeople();
+    fetchData();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const data = await peopleService.getAll();
+      setPeople(data);
+      setError(null);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPerson, setEditingPerson] = useState<PersonData | undefined>(undefined);
 
@@ -61,26 +53,11 @@ export default function SearchPage() {
       <div className={styles.container}>
         <div className={styles.contentWrapper}>
           <h1 className={styles.header}>Friend Lists ✨</h1>
-          <div style={{ 
-            backgroundColor: '#fee2e2', 
-            border: '1px solid #fca5a5', 
-            borderRadius: '8px', 
-            padding: '16px',
-            color: '#991b1b',
-            marginBottom: '20px'
-          }}>
-            <p style={{ margin: '0 0 12px 0', fontWeight: 'bold' }}>❌ เกิดข้อผิดพลาด</p>
-            <p style={{ margin: '0 0 12px 0' }}>{error}</p>
-            <p style={{ margin: '0', fontSize: '0.9rem' }}>
-              📌 ตรวจสอบว่า:
-              <br />• เซิร์ฟเวอร์ API กำลังทำงานบนพอร์ต 4000
-              <br />• URL ถูกต้อง: http://localhost:4000/people
-              <br />• ตรวจสอบ Browser Console สำหรับรายละเอียดเพิ่มเติม
-            </p>
-          </div>
-          <Button variant="primary" onClick={() => window.location.reload()}>
-            🔄 ลองใหม่
-          </Button>
+          <ErrorDisplay
+            error={error instanceof Error ? error.message : String(error)}
+            variant={categorizeError(error)}
+            onRetry={fetchData}
+          />
         </div>
       </div>
     );
@@ -97,21 +74,32 @@ export default function SearchPage() {
     }
   };
 
-  const handleSave = (data: PersonData) => {
-    if (data.id != null) {
-      setPeople((prev) => prev.map((p) => (p.id === data.id ? { ...p, ...data } : p)));
-    } else {
-      const newId = crypto.randomUUID();
-      const newPerson: PersonType = { 
-        id: newId, 
-        name: data.name, 
-        nickname: data.nickname, 
-        phone_number: data.phone_number, 
-        image_url: data.image_url || '/images/people/mark.jpg'
-      };
-      setPeople((prev) => [...prev, newPerson]);
+  const handleSave = async (data: PersonData) => {
+    try {
+      const result = data.id
+        ? await peopleService.update({ 
+            id: data.id, 
+            name: data.name,
+            nickname: data.nickname,
+            phone_number: data.phone_number,
+            image_file: data.image_file,
+          })
+        : await peopleService.create({
+            name: data.name,
+            nickname: data.nickname,
+            phone_number: data.phone_number,
+            image_file: data.image_file,
+          });
+
+      if (data.id) {
+        setPeople((prev) => prev.map((p) => (p.id === data.id ? result : p)));
+      } else {
+        setPeople((prev) => [...prev, result]);
+      }
+      setIsModalOpen(false);
+    } catch (error) {
+      alert(getUserFriendlyMessage(error));
     }
-    setIsModalOpen(false);
   };
 
   const filteredPeople = people.filter((person) => {
@@ -125,7 +113,6 @@ export default function SearchPage() {
   return (
     <div className={styles.container}>
       <div className={styles.contentWrapper}>
-        
         <h1 className={styles.header}>Friend Lists ✨</h1>
 
         <div className={styles.controls}>
@@ -183,6 +170,6 @@ export default function SearchPage() {
           />
         </Modal>
       </div>
-    </div>
+    </div> 
   );
 }

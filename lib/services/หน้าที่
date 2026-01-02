@@ -1,0 +1,7 @@
+หน้าที่: Business Logic Layer (Service Layer)
+
+จัดการ business logic ของ "People"
+เรียกใช้ API Client
+แปลง data เป็น format ที่ backend ต้องการ (FormData)
+จัดการ logging
+Throw error แบบ user-friendly
