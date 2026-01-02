@@ -1,0 +1,112 @@
+/* page.module.css */
+
+/* พื้นหลังทั้งหน้า ปรับให้ดูมีมิติด้วย Gradient อ่อนๆ */
+.container {
+  max-width: 100%;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 80px 20px;
+  background: linear-gradient(to bottom right, #f8fafc, #eef2ff);
+  font-family: 'Prompt', -apple-system, BlinkMacSystemFont, sans-serif; /* แนะนำให้ใช้ฟอนต์ Prompt ถ้ามี */
+}
+
+/* จัดกึ่งกลางเนื้อหาหลัก */
+.contentWrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* หัวข้อหน้าเว็บ */
+.header {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 3rem;
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); /* เปลี่ยนเป็นสีน้ำเงิน-ม่วง */
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-align: center;
+  letter-spacing: -0.02em;
+  filter: drop-shadow(0 4px 6px rgba(37, 99, 235, 0.2));
+  animation: slideDown 0.6s ease-out;
+}
+
+/* ส่วนควบคุม (Search + Button) */
+.controls {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+  flex-wrap: wrap;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px); /* Glassmorphism effect */
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* ช่องค้นหา */
+.searchInput {
+  flex: 1;
+  min-width: 280px;
+  padding: 16px 24px;
+  border-radius: 16px;
+  border: 2px solid #e2e8f0;
+  background: white;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  color: #334155;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+/* Grid Layout แบบ Responsive จริงๆ */
+.cardGrid {
+  width: 100%;
+  display: grid;
+  /* ปรับ column อัตโนมัติ: อย่างน้อย 300px ต่อการ์ด */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+  gap: 2rem;
+  padding: 10px;
+}
+
+/* State ตอนไม่เจอข้อมูล */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  color: #64748b;
+  font-size: 1.25rem;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px dashed #cbd5e1;
+  width: 100%;
+  max-width: 500px;
+  margin-top: 2rem;
+}
+
+/* Animation */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
