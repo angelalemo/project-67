@@ -1,46 +1,105 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PersonCard from './components/personCard';
-import { persons, PersonType } from './data/people';
+import { PersonType } from './data/people';
 import Button from './components/button';
 import Modal from './components/Model';
 import PersonForm, { PersonData } from './components/PersonForm';
-
+import ErrorDisplay from './components/ErrorDisplay';
+import { peopleService } from '@/lib/services/people.service';
+import { categorizeError, getUserFriendlyMessage } from '@/lib/utils/errorHandler';
 import styles from './page.module.css'; 
 
 export default function SearchPage() {
-  const [people, setPeople] = useState<PersonType[]>(persons);
+  const [people, setPeople] = useState<PersonType[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<unknown>(null);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const data = await peopleService.getAll();
+      setPeople(data);
+      setError(null);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPerson, setEditingPerson] = useState<PersonData | undefined>(undefined);
+
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.contentWrapper}>
+          <h1 className={styles.header}>Friend Lists ✨</h1>
+          <p>กำลังโหลดข้อมูล...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.contentWrapper}>
+          <h1 className={styles.header}>Friend Lists ✨</h1>
+          <ErrorDisplay
+            error={error instanceof Error ? error.message : String(error)}
+            variant={categorizeError(error)}
+            onRetry={fetchData}
+          />
+        </div>
+      </div>
+    );
+  }
 
   const openAddModal = () => {
     setEditingPerson(undefined);
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     if (confirm('คุณแน่ใจหรือไม่ว่าจะลบรายชื่อนี้?')) {
       setPeople((prev) => prev.filter((p) => p.id !== id));
     }
   };
 
-  const handleSave = (data: PersonData) => {
-    if (data.id != null) {
-      setPeople((prev) => prev.map((p) => (p.id === data.id ? { ...p, ...data } : p)));
-    } else {
-      const newId = people.length > 0 ? Math.max(...people.map((p) => p.id)) + 1 : 1;
-      const newPerson: PersonType = { 
-        id: newId, 
-        name: data.name, 
-        nickname: data.nickname, 
-        phonenumber: data.phonenumber, 
-        image: data.image || '/images/people/mark.jpg'
-      };
-      setPeople((prev) => [...prev, newPerson]);
+  const handleSave = async (data: PersonData) => {
+    try {
+      const result = data.id
+        ? await peopleService.update({ 
+            id: data.id, 
+            name: data.name,
+            nickname: data.nickname,
+            phone_number: data.phone_number,
+            image_file: data.image_file,
+          })
+        : await peopleService.create({
+            name: data.name,
+            nickname: data.nickname,
+            phone_number: data.phone_number,
+            image_file: data.image_file,
+          });
+
+      if (data.id) {
+        setPeople((prev) => prev.map((p) => (p.id === data.id ? result : p)));
+      } else {
+        setPeople((prev) => [...prev, result]);
+      }
+      setIsModalOpen(false);
+    } catch (error) {
+      alert(getUserFriendlyMessage(error));
     }
-    setIsModalOpen(false);
   };
 
   const filteredPeople = people.filter((person) => {
@@ -54,7 +113,6 @@ export default function SearchPage() {
   return (
     <div className={styles.container}>
       <div className={styles.contentWrapper}>
-        
         <h1 className={styles.header}>Friend Lists ✨</h1>
 
         <div className={styles.controls}>
@@ -78,15 +136,15 @@ export default function SearchPage() {
                 key={person.id}
                 name={person.name}
                 nickname={person.nickname}
-                phonenumber={person.phonenumber}
-                image={person.image}
+                phone_number={person.phone_number}
+                image_url={person.image_url}
                 onEdit={() => {
                   setEditingPerson({
                     id: person.id,
                     name: person.name,
                     nickname: person.nickname,
-                    phonenumber: person.phonenumber,
-                    image: person.image,
+                    phone_number: person.phone_number,
+                    image_url: person.image_url,
                   });
                   setIsModalOpen(true);
                 }}
@@ -112,6 +170,6 @@ export default function SearchPage() {
           />
         </Modal>
       </div>
-    </div>
+    </div> 
   );
 }

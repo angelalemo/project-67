@@ -1,0 +1,6 @@
+หน้าที่: HTTP Client พื้นฐาน (Reusable)
+
+จัดการ HTTP methods: GET, POST, PATCH, DELETE
+Error handling แบบรวมศูนย์
+แปลง response เป็น JSON
+จัดการ headers
