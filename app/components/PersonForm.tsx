@@ -4,11 +4,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import Button from './button';
 
 export interface PersonData {
-  id?: number;
+  id?: string;
   name: string;
   nickname: string;
-  phonenumber: string;
-  image: string;
+  phone_number: string;
+  image_url: string | null;
+  created_at?: string;
+  updated_at?: string;
+  image_file?: File;  // เพิ่มไฟล์จริง
 }
 
 interface PersonFormProps {
@@ -22,11 +25,12 @@ export default function PersonForm({ initialData, onSubmit, onCancel }: PersonFo
     id: undefined,
     name: '',
     nickname: '',
-    phonenumber: '',
-    image: '/images/people/mark.jpg',
+    phone_number: '',
+    image_url: '/images/people/mark.jpg',
   });
 
   const [isDragging, setIsDragging] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -42,7 +46,8 @@ export default function PersonForm({ initialData, onSubmit, onCancel }: PersonFo
   const handleFileProcess = (file: File) => {
     if (file && file.type.startsWith('image/')) {
       const imageUrl = URL.createObjectURL(file);
-      setFormData((prev) => ({ ...prev, image: imageUrl }));
+      setImageFile(file);  // เก็บไฟล์จริง
+      setFormData((prev) => ({ ...prev, image_url: imageUrl }));
     } else {
       alert('กรุณาเลือกไฟล์รูปภาพเท่านั้น');
     }
@@ -75,8 +80,12 @@ export default function PersonForm({ initialData, onSubmit, onCancel }: PersonFo
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.name.trim() && formData.nickname.trim() && formData.phonenumber.trim()) {
-      onSubmit(formData);
+    if (formData.name.trim() && formData.nickname.trim() && formData.phone_number.trim()) {
+      const submitData = { ...formData };
+      if (imageFile) {
+        submitData.image_file = imageFile;  // เพิ่มไฟล์ในการส่ง
+      }
+      onSubmit(submitData);
     } else {
       alert('กรุณากรอกข้อมูลให้ครบทุกช่อง');
     }
@@ -119,7 +128,7 @@ export default function PersonForm({ initialData, onSubmit, onCancel }: PersonFo
             flexShrink: 0
           }}>
             <img 
-              src={formData.image} 
+              src={formData.image_url || '/images/people/mark.jpg'} 
               alt="Preview" 
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               onError={(e) => { (e.target as HTMLImageElement).src = '/images/people/mark.jpg'; }}
@@ -184,8 +193,8 @@ export default function PersonForm({ initialData, onSubmit, onCancel }: PersonFo
         <label className="pf-label">เบอร์โทรศัพท์</label>
         <input
           type="tel"
-          name="phonenumber"
-          value={formData.phonenumber}
+          name="phone_number"
+          value={formData.phone_number}
           onChange={handleChange}
           placeholder="กรอกเบอร์โทรศัพท์"
           className="pf-input"

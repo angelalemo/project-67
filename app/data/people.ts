@@ -1,9 +1,11 @@
 export type PersonType = {
-  id: number;
+  id: string;
   name: string;
   nickname: string;
-  phonenumber: string;
-  image: string;
+  phone_number: string;
+  image_url: string | null;
+  created_at?: string;
+  updated_at?: string;
 };
 export const persons = [
   {
