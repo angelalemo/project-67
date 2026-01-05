@@ -43,6 +43,10 @@ export class PeopleService {
 
   /*อัปเดตข้อมูลคน*/
   async update(dto: UpdatePersonDto): Promise<PersonType> {
+    if (!dto.id) {
+      throw new Error('ID is required for update');
+    }
+    
     try {
       const formData = this.buildFormData(dto);
       const response = await apiClient.patch<ApiResponse<PersonType>>(
@@ -53,7 +57,7 @@ export class PeopleService {
       return response.data;
     } catch (error) {
       console.error('❌ Failed to update person:', error);
-      throw new Error('ไม่สามารถอัปเดตข้อมูลได้');
+      throw error;
     }
   }
 
@@ -69,6 +73,16 @@ export class PeopleService {
     if (dto.image_file) formData.append('image', dto.image_file);
 
     return formData;
+  }
+
+  async delete(id: string): Promise<void> {
+    try {
+      await apiClient.delete(API_ENDPOINTS.peopleById(id));
+      console.log('✅ Deleted person:', id);
+    } catch (error) {
+      console.error('❌ Failed to delete person:', error);
+      throw new Error('ไม่สามารถลบข้อมูลได้');
+    }
   }
 }
 

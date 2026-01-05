@@ -68,10 +68,15 @@ export default function SearchPage() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: string) => {
-    if (confirm('คุณแน่ใจหรือไม่ว่าจะลบรายชื่อนี้?')) {
+  const handleDelete = async (id: string) => {
+  if (confirm('คุณแน่ใจหรือไม่ว่าจะลบรายชื่อนี้?')) {
+    try {
+      await peopleService.delete(id);
       setPeople((prev) => prev.filter((p) => p.id !== id));
+    } catch (error) {
+      alert(getUserFriendlyMessage(error));
     }
+  }
   };
 
   const handleSave = async (data: PersonData) => {
@@ -134,6 +139,7 @@ export default function SearchPage() {
             {filteredPeople.map((person) => (
               <PersonCard
                 key={person.id}
+                id={Number(person.id)}
                 name={person.name}
                 nickname={person.nickname}
                 phone_number={person.phone_number}
