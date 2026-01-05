@@ -1,21 +1,22 @@
-// src/components/Button.tsx
+
 import React from 'react';
 
 type ButtonProps = {
-  children: React.ReactNode;      // ข้อความในปุ่ม
-  onClick?: () => void;           // ฟังก์ชันเมื่อกดปุ่ม
-  variant?: 'primary' | 'secondary'; // รูปแบบปุ่ม (ค่า default คือ primary)
+  children: React.ReactNode;      
+  onClick?: () => void;           
+  variant?: 'primary' | 'secondary'; 
   type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
 };
 
 export default function Button({ 
   children, 
   onClick, 
   variant = 'primary', 
-  type = 'button' 
+  type = 'button',
+  disabled = false
 }: ButtonProps) {
   
-  // เลือก class ตาม variant ที่ส่งมา
   const className = variant === 'primary' ? 'btn-primary' : 'btn-secondary';
 
   return (
@@ -23,6 +24,7 @@ export default function Button({
       type={type}
       className={`btn ${className}`} 
       onClick={onClick}
+      disabled={disabled}
     >
       {children}
     </button>
