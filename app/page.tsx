@@ -139,21 +139,22 @@ export default function SearchPage() {
             {filteredPeople.map((person) => (
               <PersonCard
                 key={person.id}
-                id={Number(person.id)}
+                id={String(person.id)}
                 name={person.name}
                 nickname={person.nickname}
                 phone_number={person.phone_number}
                 image_url={person.image_url}
                 onEdit={() => {
-                  setEditingPerson({
-                    id: person.id,
-                    name: person.name,
-                    nickname: person.nickname,
-                    phone_number: person.phone_number,
-                    image_url: person.image_url,
-                  });
-                  setIsModalOpen(true);
-                }}
+  console.log('DEBUG onEdit person', person);
+  setEditingPerson({
+    id: person.id,
+    name: person.name,
+    nickname: person.nickname,
+    phone_number: person.phone_number,
+    image_url: person.image_url,
+  });
+  setIsModalOpen(true);
+}}
                 onDelete={() => handleDelete(person.id)}
               />
             ))}

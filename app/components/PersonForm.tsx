@@ -26,7 +26,7 @@ export default function PersonForm({ initialData, onSubmit, onCancel }: PersonFo
     name: '',
     nickname: '',
     phone_number: '',
-    image_url: '/images/people/mark.jpg',
+    image_url: '/images/people/UserIcon.png',
   });
 
   const [isDragging, setIsDragging] = useState(false);
@@ -34,8 +34,9 @@ export default function PersonForm({ initialData, onSubmit, onCancel }: PersonFo
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (initialData) setFormData(initialData);
-  }, [initialData]);
+  console.log('DEBUG PersonForm initialData', initialData);
+  if (initialData) setFormData(initialData);
+}, [initialData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -128,10 +129,10 @@ export default function PersonForm({ initialData, onSubmit, onCancel }: PersonFo
             flexShrink: 0
           }}>
             <img 
-              src={formData.image_url || '/images/people/mark.jpg'} 
+              src={formData.image_url || '/images/people/UserIcon.png'} 
               alt="Preview" 
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              onError={(e) => { (e.target as HTMLImageElement).src = '/images/people/mark.jpg'; }}
+              onError={(e) => { (e.target as HTMLImageElement).src = '/images/people/UserIcon.png'; }}
             />
           </div>
 

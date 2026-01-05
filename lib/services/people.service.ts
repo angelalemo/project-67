@@ -49,7 +49,7 @@ export class PeopleService {
     
     try {
       const formData = this.buildFormData(dto);
-      const response = await apiClient.patch<ApiResponse<PersonType>>(
+      const response = await apiClient.put<ApiResponse<PersonType>>(
         API_ENDPOINTS.peopleById(dto.id),
         formData
       );

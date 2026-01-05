@@ -72,34 +72,34 @@ class ApiClient {
     }
   }
 
-  async patch<T>(endpoint: string, data: FormData | object): Promise<T> {
-    try {
-      const isFormData = data instanceof FormData;
+  // async patch<T>(endpoint: string, data: FormData | object): Promise<T> {
+  //   try {
+  //     const isFormData = data instanceof FormData;
       
-      const response = await fetch(this.getUrl(endpoint), {
-        method: 'PATCH',
-        headers: isFormData ? {} : { 'Content-Type': 'application/json' },
-        body: isFormData ? data : JSON.stringify(data),
-      });
+  //     const response = await fetch(this.getUrl(endpoint), {
+  //       method: 'PATCH',
+  //       headers: isFormData ? {} : { 'Content-Type': 'application/json' },
+  //       body: isFormData ? data : JSON.stringify(data),
+  //     });
 
-      if (!response.ok) {
-        throw new ApiError(
-          `HTTP error! status: ${response.status}`,
-          response.status,
-          endpoint
-        );
-      }
+  //     if (!response.ok) {
+  //       throw new ApiError(
+  //         `HTTP error! status: ${response.status}`,
+  //         response.status,
+  //         endpoint
+  //       );
+  //     }
 
-      return await response.json();
-    } catch (error) {
-      if (error instanceof ApiError) throw error;
-      throw new ApiError(
-        error instanceof Error ? error.message : 'Unknown error',
-        500,
-        endpoint
-      );
-    }
-  }
+  //     return await response.json();
+  //   } catch (error) {
+  //     if (error instanceof ApiError) throw error;
+  //     throw new ApiError(
+  //       error instanceof Error ? error.message : 'Unknown error',
+  //       500,
+  //       endpoint
+  //     );
+  //   }
+  // }
 
   //======================================= PUT AND DELETE METHODS =================================================================================
   
