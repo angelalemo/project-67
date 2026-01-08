@@ -1,8 +1,9 @@
 // API Response Types
 export interface ApiResponse<T> {
-  data?: T;
-  error?: string;
-  status: number;
+  success: boolean;
+  statusCode: number;
+  data: T;
+  timestamp: string;
 }
 
 export class ApiError extends Error {

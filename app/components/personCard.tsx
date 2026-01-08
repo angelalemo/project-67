@@ -1,29 +1,53 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Button from './button';
+import { apiClient } from '@/lib/api/client';
+import { peopleService } from '@/lib/services/people.service';
 
 type PersonCardProps = {
+  id: string;
   name: string;
   nickname: string;
   phone_number: string;
   image_url: string | null;
   onEdit?: () => void;
   onDelete?: () => void;
+  onSuccess?: () => void;
 };
 
 export default function PersonCard({
+  id,
   name,
   nickname,
   phone_number,
   image_url,
   onEdit,
   onDelete,
+  onSuccess,
 }: PersonCardProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
   // ถ้า image_url เป็น relative path ให้เติม backend URL
   const imageSrc = image_url 
     ? (image_url.startsWith('http') ? image_url : `http://localhost:4000${image_url}`)
-    : '/images/people/mark.jpg';
+    : '/images/people/UserIcon.png';
+
+  const handleDelete = async () => {
+  if (!window.confirm('คุณแน่ใจหรือว่าต้องการลบข้อมูลนี้?')) {
+    return;
+  }
+
+  setIsLoading(true);
+  try {
+    await peopleService.delete(id);
+    window.location.reload();
+  } catch (error) {
+    console.error('Delete failed:', error);
+    alert('ลบข้อมูลไม่สำเร็จ');
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="person-card">
@@ -33,12 +57,12 @@ export default function PersonCard({
       <p>เบอร์โทร: {phone_number}</p>
 
       <div className="person-card-actions" style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 10 }}>
-        <Button variant="secondary" onClick={onEdit}>
+        <Button variant="secondary" onClick={onEdit} disabled={isLoading}>
           แก้ไข
         </Button>
 
-        <Button variant="primary" onClick={onDelete}>
-          ลบ
+        <Button variant="primary" onClick={handleDelete} disabled={isLoading}>
+          {isLoading ? 'กำลังลบ...' : 'ลบ'}
         </Button>
       </div>
     </div>

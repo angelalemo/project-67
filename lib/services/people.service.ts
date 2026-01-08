@@ -1,6 +1,7 @@
 import { apiClient } from '../api/client';
 import { API_ENDPOINTS } from '../constants/api';
 import { PersonType } from '@/app/data/people';
+import { ApiResponse } from '../types/api';
 
 export interface CreatePersonDto {
   name: string;
@@ -13,54 +14,50 @@ export interface UpdatePersonDto extends Partial<CreatePersonDto> {
   id: string;
 }
 
-/**
- * People Service - Business logic layer
- */
 export class PeopleService {
-  /**
-   * ดึงข้อมูลคนทั้งหมด
-   */
+  /*ดึงข้อมูลคนทั้งหมด*/
   async getAll(): Promise<PersonType[]> {
     try {
-      const data = await apiClient.get<PersonType[]>(API_ENDPOINTS.people);
-      console.log('✅ Fetched people:', data.length, 'records');
-      return data;
+    const response = await apiClient.get<ApiResponse<PersonType[]>>(API_ENDPOINTS.people);
+    const people = Array.isArray(response.data) ? response.data : [];
+    console.log('✅ Fetched people:', people.length, 'records');
+    return people;
     } catch (error) {
       console.error('❌ Failed to fetch people:', error);
       throw new Error('ไม่สามารถดึงข้อมูลได้');
     }
   }
 
-  /**
-   * สร้างข้อมูลคนใหม่
-   */
+  /*สร้างข้อมูลคนใหม่*/
   async create(dto: CreatePersonDto): Promise<PersonType> {
     try {
       const formData = this.buildFormData(dto);
-      const result = await apiClient.post<PersonType>(API_ENDPOINTS.people, formData);
-      console.log('✅ Created person:', result);
-      return result;
+      const response = await apiClient.post<ApiResponse<PersonType>>(API_ENDPOINTS.people, formData);
+      console.log('✅ Created person:', response.data);
+      return response.data;
     } catch (error) {
       console.error('❌ Failed to create person:', error);
       throw new Error('ไม่สามารถเพิ่มข้อมูลได้');
     }
   }
 
-  /**
-   * อัปเดตข้อมูลคน
-   */
+  /*อัปเดตข้อมูลคน*/
   async update(dto: UpdatePersonDto): Promise<PersonType> {
+    if (!dto.id) {
+      throw new Error('ID is required for update');
+    }
+    
     try {
       const formData = this.buildFormData(dto);
-      const result = await apiClient.patch<PersonType>(
+      const response = await apiClient.put<ApiResponse<PersonType>>(
         API_ENDPOINTS.peopleById(dto.id),
         formData
       );
-      console.log('✅ Updated person:', result);
-      return result;
+      console.log('✅ Updated person:', response.data);
+      return response.data;
     } catch (error) {
       console.error('❌ Failed to update person:', error);
-      throw new Error('ไม่สามารถอัปเดตข้อมูลได้');
+      throw error;
     }
   }
 
@@ -76,6 +73,16 @@ export class PeopleService {
     if (dto.image_file) formData.append('image', dto.image_file);
 
     return formData;
+  }
+
+  async delete(id: string): Promise<void> {
+    try {
+      await apiClient.delete(API_ENDPOINTS.peopleById(id));
+      console.log('✅ Deleted person:', id);
+    } catch (error) {
+      console.error('❌ Failed to delete person:', error);
+      throw new Error('ไม่สามารถลบข้อมูลได้');
+    }
   }
 }
 
